@@ -13,8 +13,6 @@ const SIDECAR_HOST = 'http://127.0.0.1:8080';
 async function run_txwrapper(): Promise<void> {
   await cryptoWaitReady();
 
-  // Create a new keyring and add an Alice account.
-
   const alice = new Keyring().addFromUri(
     '//Alice',
     { name: 'Alice' },
