@@ -1,12 +1,14 @@
-import got from "got";
 import { strict as assert } from "assert";
+import { NetworkController } from "../../src/tools/sidecar/controllers/nodes_controllers";
+
+
+const network = new NetworkController()
 
 
 describe("[Nodes] endpoint", function () {
 
     it("total number of actual peers should be equal to the value in the 'numPeers'", async function () {
-        const response = await got("http://127.0.0.1:8080/node/network")
-        const body = JSON.parse(response.body)
+        const body = await network.getNodeNetwork()
 
         const actualPeersInfoLength = body.peersInfo.length
         const expectedPeersInfoLength = body.numPeers

@@ -31,9 +31,7 @@ const generalTokenTransfer = async () => {
     // console.log("Transfer sent with hash", currentTxHash.toHex());
 
 
-    const SIDECAR_HOST = 'http://127.0.0.1:8080';
-
-    const sidecarPoolResponse = await got(`${SIDECAR_HOST}/node/transaction-pool`);
+    const sidecarPoolResponse = await got(`${SIDECAR_LOCALHOST}/node/transaction-pool`);
     const sidecarPoolBody = JSON.parse(sidecarPoolResponse.body)
     const poolSize = JSON.parse(sidecarPoolBody.pool.length)
     const latestTxHashInPool = sidecarPoolBody.pool[poolSize - 1].hash

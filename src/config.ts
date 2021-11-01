@@ -1,0 +1,1 @@
+const SIDECAR_LOCALHOST = 'http://127.0.0.1:8080';

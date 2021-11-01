@@ -1,12 +1,12 @@
 import { JsonRequest } from "../request";
 
 
-export class BlocksController {
+export class NetworkController {
 
-    async getById(id: string) {
+    async getNodeNetwork() {
         return (
             await new JsonRequest()
-                .url(`${SIDECAR_LOCALHOST}/blocks/${id}`)
+                .url(`${SIDECAR_LOCALHOST}/node/network`)
                 .send())
             .body
     }

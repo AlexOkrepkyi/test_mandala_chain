@@ -1,12 +1,12 @@
 import { JsonRequest } from "../request";
 
 
-export class BlocksController {
+export class RootController {
 
-    async getById(id: string) {
+    async getRoot() {
         return (
             await new JsonRequest()
-                .url(`${SIDECAR_LOCALHOST}/blocks/${id}`)
+                .url(`${SIDECAR_LOCALHOST}`)
                 .send())
             .body
     }

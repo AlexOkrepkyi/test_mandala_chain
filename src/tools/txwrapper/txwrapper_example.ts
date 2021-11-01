@@ -7,9 +7,6 @@ import { get, post } from './utils';
 import { Balance, Transaction, TransactionMaterial } from './types';
 
 
-const SIDECAR_HOST = 'http://127.0.0.1:8080';
-
-
 async function run_txwrapper(): Promise<void> {
   await cryptoWaitReady();
 
@@ -28,7 +25,7 @@ async function run_txwrapper(): Promise<void> {
   // sidecar. We are also pulling the balance info of Alice's account to
   // ensure we are using a valid nonce.
   const material = await get<TransactionMaterial>(
-    `${SIDECAR_HOST}/transaction/material`
+    `${SIDECAR_LOCALHOST}/transaction/material`
   );
 
   console.log(
@@ -36,7 +33,7 @@ async function run_txwrapper(): Promise<void> {
   );
 
   const balance = await get<Balance>(
-    `${SIDECAR_HOST}/accounts/${deriveAddress(
+    `${SIDECAR_LOCALHOST}/accounts/${deriveAddress(
       alice.publicKey,
       42
     )}/balance-info`
@@ -144,7 +141,7 @@ async function run_txwrapper(): Promise<void> {
 
   // Send the transaction to the node. Txwrapper doesn't care how
   // you send this transaction but here we are using the API sidecar.
-  const response = await post<Transaction>(`${SIDECAR_HOST}/transaction`, {
+  const response = await post<Transaction>(`${SIDECAR_LOCALHOST}/transaction`, {
     tx: tx
   });
 
