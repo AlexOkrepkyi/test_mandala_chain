@@ -1,14 +1,16 @@
-import { JsonRequest } from "../request";
+import { CONFIG } from "../../../../config/env";
+import { Root } from "../../txwrapper/types";
+import { get } from "../../txwrapper/utils";
 
 
 export class RootController {
 
     async getRoot() {
         return (
-            await new JsonRequest()
-                .url(`${SIDECAR_LOCALHOST}`)
-                .send())
-            .body
+            await get<Root>(
+                `${CONFIG.SIDECAR_LOCALHOST}`
+            )
+        )
     }
-
+    
 }

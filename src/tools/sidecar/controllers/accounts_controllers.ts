@@ -1,24 +1,16 @@
-import { JsonRequest } from "../request";
+import { CONFIG } from "../../../../config/env";
+import { Balance } from "../../txwrapper/types";
+import { get } from "../../txwrapper/utils";
 
 
-export class AssetBalanceController {
+export class AccountsController {
 
-    async getResponseById(id: string) {
-        return await new JsonRequest()
-            .url(`${SIDECAR_LOCALHOST}/accounts/${id}/asset-balance`)
-            .send()
-    }
-    
-}
-
-export class BalanceInfoController {
-
-    async getBodyById(id: string) {
+    async getById(id: string) {
         return (
-            await new JsonRequest()
-                .url(`${SIDECAR_LOCALHOST}/accounts/${id}/balance-info`)
-                .send()
-        ).body
+            await get<Balance>(
+                `${CONFIG.SIDECAR_LOCALHOST}/accounts/${id}/balance-info`
+            )
+        )
     }
 
 }

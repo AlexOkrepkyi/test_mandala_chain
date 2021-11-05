@@ -2,21 +2,20 @@ import { strict as assert } from "assert";
 import { NetworkController } from "../../src/tools/sidecar/controllers/nodes_controllers";
 
 
-const network = new NetworkController()
+const node = new NetworkController();
 
+describe("Sidecar [nodes] endpoint", function () {
 
-describe("[Nodes] endpoint", function () {
+    it("total 2 (two) local listen addresses should be present", async function () {
+        const response = await node.getNetwork();
 
-    it("total number of actual peers should be equal to the value in the 'numPeers'", async function () {
-        const body = await network.getNodeNetwork()
-
-        const actualPeersInfoLength = body.peersInfo.length
-        const expectedPeersInfoLength = body.numPeers
+        const actualNumberOfListeAddresses = response.localListenAddresses.length;
+        const expectedNumberOfListeAddresses = 2;
 
         assert(
-            actualPeersInfoLength == expectedPeersInfoLength,
-            `Total actual peers [${actualPeersInfoLength}] != 'numPeers' value [${expectedPeersInfoLength}]`
-        )
+            actualNumberOfListeAddresses == expectedNumberOfListeAddresses,
+            `Total actual peers [${actualNumberOfListeAddresses}] != 'numPeers' value [${expectedNumberOfListeAddresses}]`
+        );
     })
 
 })

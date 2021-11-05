@@ -1,14 +1,16 @@
-import { JsonRequest } from "../request";
+import { CONFIG } from "../../../../config/env";
+import { Nodes } from "../../txwrapper/types";
+import { get } from "../../txwrapper/utils";
 
 
 export class NetworkController {
 
-    async getNodeNetwork() {
+    async getNetwork() {
         return (
-            await new JsonRequest()
-                .url(`${SIDECAR_LOCALHOST}/node/network`)
-                .send())
-            .body
+            await get<Nodes>(
+                `${CONFIG.SIDECAR_LOCALHOST}/node/network`
+            )
+        )
     }
 
 }
