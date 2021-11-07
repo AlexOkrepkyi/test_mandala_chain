@@ -13,7 +13,7 @@ describe("[Acala.js][balance]", function () {
     const bobAddress = testingPair.bob.address;
     const amountToTransfer = 100_000_000_000_000;
 
-    it("[sender] free balance should be updated after tokens being sent", async function () {
+    it("[sender] free balance should be updated after tokens are sent", async function () {
         let { data: { free: alicePreviousFree } } = await (await api).query.system.account(aliceAddress);
 
         await signAndSendTransaction(await api, bobAddress, amountToTransfer, testingPair);
@@ -27,7 +27,7 @@ describe("[Acala.js][balance]", function () {
         )
     })
 
-    it("[receiver] free balance should be updated after tokens being sent", async function () {
+    it("[receiver] free balance should be updated after tokens are sent", async function () {
         let { data: { free: bobPreviousFree } } = await (await api).query.system.account(bobAddress);
 
         await signAndSendTransaction(await api, bobAddress, amountToTransfer, testingPair);
