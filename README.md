@@ -1,1 +1,1 @@
-# test_rococo_chain
+# test_mandaka_chain
