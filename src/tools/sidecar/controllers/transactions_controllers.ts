@@ -1,7 +1,6 @@
 import { CONFIG } from "../../../../config/env";
 import { TransactionMaterial } from "../../txwrapper/types";
 import { get, post } from "../../txwrapper/utils";
-import { JsonRequest } from "../request";
 
 
 export class TransactionsController {

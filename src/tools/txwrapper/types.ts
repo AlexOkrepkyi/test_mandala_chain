@@ -5,23 +5,25 @@ export interface Balance {
   free: number;
 }
 
-
 export interface Block {
   header: {
     number: number;
   };
 }
 
-
 export interface Nodes {
   localListenAddresses: Array<string>;
+  pool: [
+    {
+      hash: string;
+      encodedExtrinsic: string;
+    }
+  ];
 }
-
 
 export interface Root {
   version: string
 }
-
 
 export interface RuntimeVersion {
   specVersion: number;
@@ -29,11 +31,9 @@ export interface RuntimeVersion {
   specName: 'acala' | 'karura' | 'mandala';
 }
 
-
 export interface Transaction {
   hash: string;
 }
-
 
 export interface TransactionMaterial {
   body: any;

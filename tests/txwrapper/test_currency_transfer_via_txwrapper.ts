@@ -1,37 +1,35 @@
 import { EXTRINSIC_VERSION } from '@polkadot/types/extrinsic/v4/Extrinsic';
 import { construct, decode, getRegistry, methods, TokenSymbol } from '@acala-network/txwrapper-acala';
 import { TestAccounts } from '../../src/accounts/testAccounts';
-import { Balance, Transaction, TransactionMaterial } from '../../src/tools/txwrapper/types';
-import { get, post } from '../../src/tools/txwrapper/utils';
+import { Transaction } from '../../src/tools/txwrapper/types';
+import { post } from '../../src/tools/txwrapper/utils';
 import { strict as assert } from 'assert';
 import { waitUntil } from 'async-wait-until';
 import { CONFIG } from '../../config/env';
+import { TransactionsController } from '../../src/tools/sidecar/controllers/transactions_controllers';
+import { AccountsController } from '../../src/tools/sidecar/controllers/accounts_controllers';
 
 
+const accountsController = new AccountsController();
 const testAccount = new TestAccounts();
+const txController = new TransactionsController();
 
 
 describe("[txwrapper][sidecar]", function () {
 
     it("currency transfer", async function () {
-        const alice = await testAccount.getAlice()
-        const bob = await testAccount.getBob()
+        const alice = await testAccount.getAlice();
+        const bob = await testAccount.getBob();
 
         const aliceAddress = alice.address;
         const bobAddress = bob.address;
 
+        const transferVolume = 300_000_000_000_000;
+
         // Pull info from the node to construct an offline transaction.
-        const material = await get<TransactionMaterial>(
-            `${CONFIG.SIDECAR_LOCALHOST}/transaction/material`
-        );
-
-        const aliceBalance = await get<Balance>(
-            `${CONFIG.SIDECAR_LOCALHOST}/accounts/${aliceAddress}/balance-info`
-        );
-
-        const alicePreviousFree = aliceBalance.free
-        console.log(alicePreviousFree);
-
+        const material = await txController.getTxMaterial();
+        const aliceBalance = await accountsController.getById(aliceAddress);
+        const alicePreviousFree = aliceBalance.free;
 
         assert(alicePreviousFree > 0);
 
@@ -48,16 +46,16 @@ describe("[txwrapper][sidecar]", function () {
 
         // Create a new registry instance using metadata from node.
         const registry = getRegistry({
-            chainName,
-            specName,
-            specVersion,
+            chainName: chainName,
+            specName: specName,
+            specVersion: specVersion,
             metadataRpc: metadata
         });
 
         // Create an unsigned currency transfer transaction.
         const unsigned = methods.currencies.transfer(
             {
-                amount: '321',
+                amount: transferVolume,
                 currencyId: { Token: TokenSymbol.ACA },
                 dest: bobAddress
             },
@@ -66,16 +64,16 @@ describe("[txwrapper][sidecar]", function () {
                 blockHash: hash,
                 blockNumber: height,
                 eraPeriod: 64,
-                genesisHash,
+                genesisHash: genesisHash,
                 metadataRpc: metadata,
                 nonce: aliceBalance.nonce + 1, // This doesn't take into account pending transactions in the pool
-                specVersion,
+                specVersion: specVersion,
                 tip: 0,
                 transactionVersion: txVersion
             },
             {
                 metadataRpc: metadata,
-                registry
+                registry: registry
             }
         );
 
@@ -92,7 +90,7 @@ describe("[txwrapper][sidecar]", function () {
         // Create a signed transaction.
         const tx = construct.signedTx(unsigned, signature, {
             metadataRpc: metadata,
-            registry
+            registry: registry
         });
 
         const expectedTxHash = construct.txHash(tx);
@@ -100,16 +98,8 @@ describe("[txwrapper][sidecar]", function () {
         // Decode transaction payload.
         const payloadInfo = decode(signingPayload, {
             metadataRpc: metadata,
-            registry
+            registry: registry
         });
-
-        console.log(
-            `Decoded transaction\n  To (Bob): ${JSON.stringify(
-                payloadInfo.method.args.dest
-            )}\n` +
-            `  Amount: ${payloadInfo.method.args.amount}\n` +
-            `  CurrencyId: ${JSON.stringify(payloadInfo.method.args.currencyId)}\n`
-        );
 
         // Send the transaction to the node. Txwrapper doesn't care how
         // you send this transaction but here we are using the API sidecar.
@@ -133,8 +123,8 @@ describe("[txwrapper][sidecar]", function () {
 
         assert(
             alicePreviousFree > aliceCurrentFree,
-            `Alice's free balance before transfer [${alicePreviousFree}] is not larger than after [${aliceCurrentFree}]`)
-
-    }).timeout(10_000)
+            `Alice --> previous free balance: [${alicePreviousFree}] should be larger than the current free balance [${aliceCurrentFree}]`
+        );
+    });
 
 });
